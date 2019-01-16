@@ -34,6 +34,7 @@ import picocli.CommandLine.Option;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 /**
@@ -136,6 +137,31 @@ public class SrcClrWrapper implements Callable<Void>
         }
     }
 
+
+    String processName ( String name )
+    {
+        // If the subpackage is NOT a duplicate prefix of the filename then add that as well.
+        if ( ! isEmpty( getPackageName() ) )
+        {
+            if ( ! name.startsWith( getPackageName() ) )
+            {
+                name = getPackageName() + '-' + name;
+            }
+        }
+
+        // Format:
+        // [ ProductName [ - ProductVersion ] - ]   [ SubPackageName - ]  URL-Target
+        name = ( isEmpty ( getProduct() ) ? "" : getProduct() + '-' + ( isEmpty ( getVersion() ) ? "" : getVersion() + '-' ))
+                        + name;
+
+        if ( name.contains( " " ) )
+        {
+            logger.warn ("Replace whitespace with '-' in {}", name);
+            name = name.replace( ' ', '-' );
+        }
+
+        return name;
+    }
 
     @Getter
     private static class ExceptionHandler<R> extends CommandLine.DefaultExceptionHandler<R>

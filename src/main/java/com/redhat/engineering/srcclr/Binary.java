@@ -38,7 +38,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.Option;
 import static picocli.CommandLine.ParentCommand;
@@ -85,26 +84,8 @@ public class Binary implements Callable<Void>
             filename = FilenameUtils.getName( processedUrl.getPath() );
             String name = filename;
             File target = new File( urlDownloadLocation.toFile(), name );
+            name = parent.processName( name );
 
-            // If the subpackage is NOT a duplicate prefix of the filename then add that as well.
-            if ( ! isEmpty( parent.getPackageName() ) )
-            {
-                if ( ! name.startsWith( parent.getPackageName() ) )
-                {
-                    name = parent.getPackageName() + '-' + name;
-                }
-            }
-
-            // Format:
-            // [ ProductName [ - ProductVersion ] - ]   [ SubPackageName - ]  FileName
-            name = ( isEmpty ( parent.getProduct() ) ? "" : parent.getProduct() + '-' + ( isEmpty ( parent.getVersion() ) ? "" : parent.getVersion() + '-' ))
-                + name;
-
-            if ( name.contains( " " ) )
-            {
-                logger.warn ("Replace whitespace with '-' in {}", name);
-                name = name.replace( ' ', '-' );
-            }
             logger.debug( "Created temporary as {} and downloading {} to {} using temporary directory of {} with name of {}",
                           urlDownloadLocation, processedUrl, target, temporaryLocation, name);
 
@@ -126,6 +107,8 @@ public class Binary implements Callable<Void>
             env.put( "SRCCLR_SCM_NAME", name );
 
             List<String> args = new ArrayList<>();
+//            args.add ( "--project-name" );
+//            args.add ( name );
             args.add ( "--scm-rev" );
             args.add ( parent.getVersion() );
             args.add ( "--scm-ref" );

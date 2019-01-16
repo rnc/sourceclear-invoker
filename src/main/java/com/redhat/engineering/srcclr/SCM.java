@@ -19,9 +19,11 @@ import com.redhat.engineering.srcclr.json.sourceclear.Record;
 import com.redhat.engineering.srcclr.json.sourceclear.SourceClearJSON;
 import com.redhat.engineering.srcclr.processor.ProcessorResult;
 import com.redhat.engineering.srcclr.utils.ScanException;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +68,10 @@ public class SCM implements Callable<Void>
 
         List<String> args = new ArrayList<>();
         Map<String,String> env = new HashMap<>(  );
+
+        String name = parent.processName ( FilenameUtils.getName( new URL( url ).getPath() ) );
+
+        env.put( "SRCCLR_SCM_NAME", name );
 
         if ( isNotEmpty( url ) )
         {
