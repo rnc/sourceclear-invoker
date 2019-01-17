@@ -71,8 +71,6 @@ public class SCM implements Callable<Void>
 
         String name = parent.processName ( FilenameUtils.getName( new URL( url ).getPath() ) );
 
-        env.put( "SRCCLR_SCM_NAME", name );
-
         if ( isNotEmpty( url ) )
         {
             args.add( "--url" );

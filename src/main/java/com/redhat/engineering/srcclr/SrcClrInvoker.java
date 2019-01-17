@@ -79,6 +79,7 @@ public class SrcClrInvoker
         // If we add --debug before the scan type command then that enables vast
         // amount of debugging (but breaks the json output).
         // command.add( "--debug" );
+
         if ( type == ScanType.SCM || type == ScanType.BINARY)
         {
             command.add( "scan" );
